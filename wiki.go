@@ -23,5 +23,5 @@ func loadPage(title string) *Page {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: title, Body: body}
+	return &Page{Title: title, Body: body}, nil
 }
