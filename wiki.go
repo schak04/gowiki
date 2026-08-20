@@ -17,7 +17,7 @@ func (p *Page) save() error { // since return type of WriteFile is error
 	return os.WriteFile(filename, p.Body, 0600) // 0600 = read write perms for the current user only
 }
 
-func loadPage(title string) *Page {
+func loadPage(title string) (*Page, error) {
 	filename := title + ".txt"
 	body, err := os.ReadFile(filename) // ReadFile returns []byte and error
 	if err != nil {
