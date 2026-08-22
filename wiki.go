@@ -4,6 +4,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 )
 
@@ -34,10 +36,19 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
-func main() {
-	p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
-	p1.save()
+// handles URLs prefixed with "/view/"
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/view/"):]
+	p, _ := loadPage(title)
+	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body) // fmt.Fprintf formats a string and writes it to a specified io.Writer destination (like a file, standard error, or network buffer) instead of standard output
+	// func Fprintf(w io.Writer, format string, a ...any) (n int, err error)
+}
 
-	p2, _ := loadPage("TestPage")
-	fmt.Println(string(p2.Body))
+func main() {
+	// p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
+	// p1.save()
+	// p2, _ := loadPage("TestPage")
+	// fmt.Println(string(p2.Body))
+	http.HandleFunc("/view/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil)) // ListenAndServe blocks while the server is running. If it fails or stops, it returns an error. log.Fatal logs that error and exits.
 }
