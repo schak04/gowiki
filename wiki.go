@@ -44,11 +44,28 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// func Fprintf(w io.Writer, format string, a ...any) (n int, err error)
 }
 
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/edit/"):]
+	p, err := loadPage(title)
+	if err != nil {
+		p = &Page{Title: title}
+	}
+	fmt.Fprintf(w, "<h1>Editing %s</h1>"+
+		"<form action=\"/save/%s\" method=\"POST\">"+
+		"<textarea name=\"body\">%s</textarea><br>"+
+		"<input type=\"submit\" value=\"Save\">"+
+		"</form>",
+		p.Title, p.Title, p.Body)
+}
+
 func main() {
 	// p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
 	// p1.save()
 	// p2, _ := loadPage("TestPage")
 	// fmt.Println(string(p2.Body))
 	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/edit/", editHandler)
+	// http.HandleFunc("/save/", saveHandler)
+	fmt.Println("Server listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil)) // ListenAndServe blocks while the server is running. If it fails or stops, it returns an error. log.Fatal logs that error and exits.
 }
