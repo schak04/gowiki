@@ -39,9 +39,16 @@ func loadPage(title string) (*Page, error) {
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	// The function template.ParseFiles will read the contents of edit.html and return a *template.Template.
-	t, _ := template.ParseFiles(tmpl + ".html")
+	t, err := template.ParseFiles(tmpl + ".html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// The method t.Execute executes the template, writing the generated HTML to the http.ResponseWriter. The .Title and .Body dotted identifiers refer to p.Title and p.Body.
-	t.Execute(w, p)
+	err = t.Execute(w, p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // handles URLs prefixed with "/view/"
@@ -71,7 +78,11 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	// before it fits into the Page struct.
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)} // string -> []byte
-	p.save()
+	err := p.save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
