@@ -47,7 +47,12 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 // handles URLs prefixed with "/view/"
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
-	p, _ := loadPage(title)
+	p, err := loadPage(title)
+	if err != nil {
+		// The http.Redirect function adds an HTTP status code of http.StatusFound (302) and a Location header to the HTTP response.
+		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+		return
+	}
 	renderTemplate(w, "view", p)
 }
 
