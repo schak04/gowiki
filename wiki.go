@@ -41,8 +41,12 @@ func loadPage(title string) (*Page, error) {
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, _ := loadPage(title)
-	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body) // fmt.Fprintf formats a string and writes it to a specified io.Writer destination (like a file, standard error, or network buffer) instead of standard output
+	// fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body) // fmt.Fprintf formats a string and writes it to a specified io.Writer destination (like a file, standard error, or network buffer) instead of standard output
 	// func Fprintf(w io.Writer, format string, a ...any) (n int, err error)
+
+	// html/template
+	t, _ := template.ParseFiles("view.html")
+	t.Execute(w, p)
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
