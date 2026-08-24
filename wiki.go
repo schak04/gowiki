@@ -12,14 +12,6 @@ import (
 	"regexp"
 )
 
-// The function template.Must is a convenience wrapper that panics when passed a non-nil error value, and otherwise returns the *Template unaltered.
-// A panic is appropriate here; if the templates can't be loaded the only sensible thing to do is exit the program.
-// The ParseFiles function takes any number of string arguments that identify our template files, and parses those files into templates that are named after the base file name. If we were to add more templates to our program, we would add their names to the ParseFiles call's arguments.
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
-
-// The function regexp.MustCompile will parse and compile the regular expression, and return a regexp.Regexp. MustCompile is distinct from Compile in that it will panic if the expression compilation fails, while Compile returns an error as a second parameter.
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
-
 type Page struct {
 	Title string
 	Body  []byte // a byte slice because files are fundamentally raw bytes, not strings
@@ -47,6 +39,11 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
+// The function template.Must is a convenience wrapper that panics when passed a non-nil error value, and otherwise returns the *Template unaltered.
+// A panic is appropriate here; if the templates can't be loaded the only sensible thing to do is exit the program.
+// The ParseFiles function takes any number of string arguments that identify our template files, and parses those files into templates that are named after the base file name. If we were to add more templates to our program, we would add their names to the ParseFiles call's arguments.
+var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+
 // Old comments (pre-template caching):
 // The function template.ParseFiles will read the contents of edit.html and return a *template.Template.
 // The method t.Execute executes the template, writing the generated HTML to the http.ResponseWriter. The .Title and .Body dotted identifiers refer to p.Title and p.Body.
@@ -57,6 +54,11 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	}
 }
 
+// The function regexp.MustCompile will parse and compile the regular expression, and return a regexp.Regexp. MustCompile is distinct from Compile in that it will panic if the expression compilation fails, while Compile returns an error as a second parameter.
+var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+
+/* Two-layered commenting to make it obvious this serves to purpose anymore but I wrote it once and that too for a reason until things were refactored.
+// Old code:
 // func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 // 	m := validPath.FindStringSubmatch(r.URL.Path)
 // 	if m == nil {
@@ -67,6 +69,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 // 	// If the title is valid, it will be returned along with a nil error value.
 // 	return m[2], nil // The title is the second subexpression.
 // }
+*/
 
 // The closure returned by makeHandler is a function that takes an http.ResponseWriter and http.Request (in other words, an http.HandlerFunc).
 // The closure extracts the title from the request path, and validates it with the validPath regexp. If the title is invalid, an error will be written to the ResponseWriter using the http.NotFound function. If the title is valid, the enclosed handler function fn will be called with the ResponseWriter, Request, and title as arguments.
