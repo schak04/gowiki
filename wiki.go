@@ -23,7 +23,7 @@ type Page struct {
 // no specific reason for using a pointer receiver instead of a value receiver, it isn't necessary here.
 func (p *Page) save() error { // since return type of WriteFile is error
 	filename := p.Title + ".txt"
-	return os.WriteFile(filename, p.Body, 0600) // 0600 = read write perms for the current user only. The leading 0 means octal notation.
+	return os.WriteFile("data/"+filename, p.Body, 0600) // 0600 = read write perms for the current user only. The leading 0 means octal notation.
 }
 
 // loadPage is a function instead of a method because there isn't an existing Page to operate on yet
@@ -32,7 +32,7 @@ func (p *Page) save() error { // since return type of WriteFile is error
 // no specific reason for returning *Page instead of just Page
 func loadPage(title string) (*Page, error) {
 	filename := title + ".txt"
-	body, err := os.ReadFile(filename) // ReadFile returns []byte and error
+	body, err := os.ReadFile("data/" + filename) // ReadFile returns []byte and error
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func loadPage(title string) (*Page, error) {
 // The function template.Must is a convenience wrapper that panics when passed a non-nil error value, and otherwise returns the *Template unaltered.
 // A panic is appropriate here; if the templates can't be loaded the only sensible thing to do is exit the program.
 // The ParseFiles function takes any number of string arguments that identify our template files, and parses those files into templates that are named after the base file name. If we were to add more templates to our program, we would add their names to the ParseFiles call's arguments.
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+var templates = template.Must(template.ParseFiles("tmpl/edit.html", "tmpl/view.html"))
 
 // Old comments (pre-template caching):
 // The function template.ParseFiles will read the contents of edit.html and return a *template.Template.
