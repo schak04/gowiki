@@ -57,7 +57,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 // The function regexp.MustCompile will parse and compile the regular expression, and return a regexp.Regexp. MustCompile is distinct from Compile in that it will panic if the expression compilation fails, while Compile returns an error as a second parameter.
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
-/* Two-layered commenting to make it obvious this serves to purpose anymore but I wrote it once and that too for a reason until things were refactored.
+/* Two-layered commenting to make it obvious that this serves no purpose anymore, but I wrote it once and that too for a reason until things were refactored.
 // Old code:
 // func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 // 	m := validPath.FindStringSubmatch(r.URL.Path)
