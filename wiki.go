@@ -37,7 +37,7 @@ func (p *Page) save() error { // since return type of WriteFile is error
 // loadPage is a function instead of a method because there isn't an existing Page to operate on yet
 // title -> find/load Page -> return Page
 // that is why it being a function makes sense
-// no specific reason for return *Page instead of just Page
+// no specific reason for returning *Page instead of just Page
 func loadPage(title string) (*Page, error) {
 	filename := title + ".txt"
 	body, err := os.ReadFile(filename) // ReadFile returns []byte and error
