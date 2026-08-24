@@ -3,13 +3,13 @@
 package main
 
 import (
+	// "errors"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
-	"errors"
 )
 
 // The function template.Must is a convenience wrapper that panics when passed a non-nil error value, and otherwise returns the *Template unaltered.
@@ -57,20 +57,20 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	}
 }
 
-func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
-	m := validPath.FindStringSubmatch(r.URL.Path)
-	if m == nil {
-		// If the title is invalid, the function will write a "404 Not Found" error to the HTTP connection, and return an error to the handler.
-		http.NotFound(w, r)
-		return "", errors.New(invalid Page Title)
-	}
-	// If the title is valid, it will be returned along with a nil error value.
-	return m[2], nil // The title is the second subexpression.
-}
+// func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
+// 	m := validPath.FindStringSubmatch(r.URL.Path)
+// 	if m == nil {
+// 		// If the title is invalid, the function will write a "404 Not Found" error to the HTTP connection, and return an error to the handler.
+// 		http.NotFound(w, r)
+// 		return "", errors.New(invalid Page Title)
+// 	}
+// 	// If the title is valid, it will be returned along with a nil error value.
+// 	return m[2], nil // The title is the second subexpression.
+// }
 
 // The closure returned by makeHandler is a function that takes an http.ResponseWriter and http.Request (in other words, an http.HandlerFunc).
-// The closure extracts the title from the request path, and validates it with the validPath regexp. If the title is invalid, an error will be written to the ResponseWriter using the http.NotFound function. If the title is valid, the enclosed handler function fn will be called with the ResponseWriter, Request, and title as arguments. 
-func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandleFunc {
+// The closure extracts the title from the request path, and validates it with the validPath regexp. If the title is invalid, an error will be written to the ResponseWriter using the http.NotFound function. If the title is valid, the enclosed handler function fn will be called with the ResponseWriter, Request, and title as arguments.
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m == nil {
